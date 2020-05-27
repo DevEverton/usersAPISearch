@@ -5,10 +5,11 @@ async function load() {
   const users = await fetchData();
   const input = elements.input;
   const button = elements.button;
+  const usersTitle = elements.usersTitle;
 
   input.focus();
   button.disabled = true;
-  searchUsers();
+  searchUsers(input, button, users);
   renderUsers(users);
 }
 
@@ -26,7 +27,7 @@ async function fetchData() {
   let users = json.results.map((user) => {
     return {
       name: `${user.name.first} ${user.name.last}`,
-      picture: user.picture.large,
+      picture: user.picture.medium,
       age: user.dob.age,
       gender: user.gender,
     };
@@ -34,17 +35,28 @@ async function fetchData() {
   return users;
 }
 
-function searchUsers() {}
+function searchUsers(input, button, users) {
+  input.addEventListener("keyup", () => {
+    button.disabled = false;
+    if (input.value === "") {
+      button.disabled = true;
+    }
+    console.log(input.value);
+  });
+}
 
 function renderUsers(users) {
+  const usersTitle = document.querySelector(".users-title");
   const usersDiv = document.querySelector(".results-list");
+
+  usersTitle.textContent = `${users.length} usuário(s) encontrado(s)`;
   let usersHTML = "<div>";
   users.forEach((user) => {
     const { name, picture, age, gender } = user;
     const userHTML = `
         <div id="${gender}" class="user-container">
             <img src="${picture}">
-            <span>${name}</span>
+            <span>${name}, </span>
             <span>${age} anos</span>
         </div>
     `;
