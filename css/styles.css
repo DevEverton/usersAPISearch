@@ -5,9 +5,15 @@ body {
 
 h1 {
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 15rem;
+  margin-bottom: 2rem;
   color: #7c3c21;
   font-weight: bold;
+}
+
+h2 {
+  font-size: 1.75rem;
+  color: #7c3c21;
 }
 
 .form-control {
@@ -15,7 +21,7 @@ h1 {
 }
 
 .search-container {
-  padding: 4rem 10rem 0 10rem;
+  padding: 4rem 15rem 0 15rem;
 }
 
 .btn {
@@ -31,7 +37,7 @@ h1 {
 
 .users-div {
   border: 1px solid #e8e4e1;
-  margin-left: 10rem;
+  margin-left: 15rem;
   margin-right: 0.5rem;
   width: 40%;
   padding: 3rem;
@@ -41,6 +47,6 @@ h1 {
   border: 1px solid #e8e4e1;
   width: 40%;
   margin-left: 0.5rem;
-  margin-right: 10rem;
+  margin-right: 15rem;
   padding: 3rem;
 }
