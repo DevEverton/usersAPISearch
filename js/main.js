@@ -6,7 +6,8 @@ async function load() {
   const input = elements.input;
   const button = elements.button;
   setUpSearchBar(input, button);
-  searchUsers(input, button, users);
+  searchEngine(input, users);
+  handleTyping(input, button, users);
 }
 
 function setUpSearchBar(input, button) {
@@ -36,35 +37,62 @@ async function fetchData() {
   return users;
 }
 
-function searchUsers(input, button, users) {
+function searchEngine(input, users) {
+  if (users === []) {
+    return;
+  }
   let sortedUsers = users.sort((a, b) => {
     return a.name.localeCompare(b.name);
   });
 
-  //Transformar nomes da lista para lowerCase
+  sortedUsers.forEach((user) => {
+    user.name = user.name.trim().toLowerCase();
+  });
 
-  function updateList() {
-    let inputValue = input.value;
-    sortedUsers = sortedUsers.filter((user) => user.name.includes(inputValue));
-    renderUsers(sortedUsers);
-    renderStats(sortedUsers);
+  let inputValue = input.value.toLowerCase();
+  sortedUsers = sortedUsers.filter((user) => user.name.includes(inputValue));
+
+  return sortedUsers;
+}
+
+function handleTyping(input, button, users) {
+  function render(users) {
+    renderUsers(users);
+    renderStats(users);
   }
 
-  input.addEventListener("keyup", (event) => {
+  //   function removeChilds() {
+  //     const usersTitle = document.querySelector(".users-title");
+  //     const statsTitle = document.querySelector(".stats-title");
+  //     const usersDiv = document.querySelector(".results-list");
+  //     const statsDiv = document.querySelector(".stats-list");
+  //     usersDiv.innerHtml = ``;
+  //     statsDiv.innerHTML = ``;
+  //     usersTitle.textContent = "Nenhum Usuário Filtrado";
+  //     statsTitle.textContent = "Nada a ser exibido";
+  //   }
+
+  input.addEventListener("keyup", () => {
     button.disabled = false;
-    if (event.key === "Backspace") {
-      updateList();
-    }
     if (input.value === "") {
+      //   removeChilds();
       button.disabled = true;
+      render(searchEngine(input, []));
+    } else {
+      render(searchEngine(input, users));
     }
-    updateList();
   });
 }
 
 function renderUsers(users) {
   const usersTitle = document.querySelector(".users-title");
   const usersDiv = document.querySelector(".results-list");
+
+  String.prototype.capitalize = function () {
+    return this.toLowerCase().replace(/^.|\s\S/g, function (a) {
+      return a.toUpperCase();
+    });
+  };
 
   usersTitle.textContent = `${users.length} usuário(s) encontrado(s)`;
   let usersHTML = "<div>";
@@ -73,13 +101,13 @@ function renderUsers(users) {
     const userHTML = `
         <div id="${gender}" class="user-container">
             <img src="${picture}">
-            <span>${name}, </span>
+            <span>${name.capitalize()}, </span>
             <span>${age} anos</span>
         </div>
     `;
     usersHTML += userHTML;
-    usersDiv.innerHTML = usersHTML;
   });
+  usersDiv.innerHTML = usersHTML;
   usersHTML += "</div>";
 }
 
@@ -102,7 +130,13 @@ function renderStats(users) {
     let somaIdades = users.reduce((acc, user) => {
       return acc + user.age;
     }, 0);
-    let mediaIdades = Math.floor(somaIdades / users.length);
+
+    let mediaIdades = null;
+    if (users.length === 0) {
+      mediaIdades = 0;
+    } else {
+      mediaIdades = (somaIdades / users.length).toFixed(2);
+    }
 
     return { maleCount, femaleCount, somaIdades, mediaIdades };
   }
@@ -111,9 +145,11 @@ function renderStats(users) {
   const statsDiv = document.querySelector(".stats-list");
   let getStats = calculateStats();
   statsTitle.textContent = `Estatísticas`;
-  statsDiv.innerHTML = `<span>Sexo masculino: ${getStats.maleCount}</span>
+  statsDiv.innerHTML = `
+  <span>Sexo masculino: ${getStats.maleCount}</span>
   <span>Sexo feminio: ${getStats.femaleCount}</span>
   <span>Soma das idades: ${getStats.somaIdades}</span>
   <span>Média das idades: ${getStats.mediaIdades}</span>
+  
   `;
 }
