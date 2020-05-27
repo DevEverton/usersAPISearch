@@ -37,14 +37,28 @@ async function fetchData() {
 }
 
 function searchUsers(input, button, users) {
-  input.addEventListener("keyup", () => {
+  let sortedUsers = users.sort((a, b) => {
+    return a.name.localeCompare(b.name);
+  });
+
+  //Transformar nomes da lista para lowerCase
+
+  function updateList() {
+    let inputValue = input.value;
+    sortedUsers = sortedUsers.filter((user) => user.name.includes(inputValue));
+    renderUsers(sortedUsers);
+    renderStats(sortedUsers);
+  }
+
+  input.addEventListener("keyup", (event) => {
     button.disabled = false;
+    if (event.key === "Backspace") {
+      updateList();
+    }
     if (input.value === "") {
       button.disabled = true;
     }
-
-    renderUsers(users);
-    renderStats(users);
+    updateList();
   });
 }
 
@@ -92,6 +106,7 @@ function renderStats(users) {
 
     return { maleCount, femaleCount, somaIdades, mediaIdades };
   }
+
   const statsTitle = document.querySelector(".stats-title");
   const statsDiv = document.querySelector(".stats-list");
   let getStats = calculateStats();
