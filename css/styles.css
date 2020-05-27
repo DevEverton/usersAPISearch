@@ -41,7 +41,6 @@ span {
 .users-container {
   display: flex;
   flex-direction: row;
-  align-items: center;
 }
 
 .users-div {
@@ -52,10 +51,15 @@ span {
   padding: 1rem;
 }
 
-.statistics-div {
+.stats-div {
   border: 1px solid #e8e4e1;
   width: 40%;
   margin-left: 0.5rem;
   margin-right: 15rem;
-  padding: 3rem;
+  padding: 1rem;
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
 }

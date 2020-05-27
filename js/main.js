@@ -5,12 +5,13 @@ async function load() {
   const users = await fetchData();
   const input = elements.input;
   const button = elements.button;
-  const usersTitle = elements.usersTitle;
+  setUpSearchBar(input, button);
+  searchUsers(input, button, users);
+}
 
+function setUpSearchBar(input, button) {
   input.focus();
   button.disabled = true;
-  searchUsers(input, button, users);
-  renderUsers(users);
 }
 
 function getElements() {
@@ -41,7 +42,9 @@ function searchUsers(input, button, users) {
     if (input.value === "") {
       button.disabled = true;
     }
-    console.log(input.value);
+
+    renderUsers(users);
+    renderStats(users);
   });
 }
 
@@ -66,4 +69,36 @@ function renderUsers(users) {
   usersHTML += "</div>";
 }
 
-function renderStats(stats) {}
+function renderStats(users) {
+  function calculateStats() {
+    let maleArr = [];
+    let femaleArr = [];
+
+    maleArr = users.map((user) => {
+      return user.gender === "male";
+    });
+
+    femaleArr = users.map((user) => {
+      return user.gender === "female";
+    });
+
+    let maleCount = maleArr.filter((bool) => bool === true).length;
+    let femaleCount = femaleArr.filter((bool) => bool === true).length;
+
+    let somaIdades = users.reduce((acc, user) => {
+      return acc + user.age;
+    }, 0);
+    let mediaIdades = Math.floor(somaIdades / users.length);
+
+    return { maleCount, femaleCount, somaIdades, mediaIdades };
+  }
+  const statsTitle = document.querySelector(".stats-title");
+  const statsDiv = document.querySelector(".stats-list");
+  let getStats = calculateStats();
+  statsTitle.textContent = `Estatísticas`;
+  statsDiv.innerHTML = `<span>Sexo masculino: ${getStats.maleCount}</span>
+  <span>Sexo feminio: ${getStats.femaleCount}</span>
+  <span>Soma das idades: ${getStats.somaIdades}</span>
+  <span>Média das idades: ${getStats.mediaIdades}</span>
+  `;
+}
